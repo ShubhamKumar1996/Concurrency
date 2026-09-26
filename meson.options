@@ -1,0 +1,5 @@
+option('sanitizer',
+  type : 'combo',
+  choices : ['none', 'thread', 'address'],
+  value : 'none',
+  description : 'Runtime instrumentation: none, thread (TSan), or address (ASan+UBSan)')

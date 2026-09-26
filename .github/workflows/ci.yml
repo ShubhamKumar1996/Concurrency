@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    name: Build & test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y meson ninja-build
+
+      - name: Configure
+        run: meson setup builddir
+
+      - name: Build
+        run: meson compile -C builddir
+
+      - name: Test
+        run: meson test -C builddir --print-errorlogs
+
+  thread-sanitizer:
+    name: ThreadSanitizer
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y meson ninja-build
+
+      - name: Configure with ThreadSanitizer
+        run: meson setup builddir-tsan -Dsanitizer=thread
+
+      - name: Build
+        run: meson compile -C builddir-tsan
+
+      - name: Test
+        run: meson test -C builddir-tsan --print-errorlogs

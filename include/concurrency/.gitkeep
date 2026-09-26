@@ -1,0 +1,3 @@
+Placeholder to keep this directory tracked. Shared headers live under
+include/concurrency/ and are pulled into topics when two or more exercises
+need them.
