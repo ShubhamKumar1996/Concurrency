@@ -1,7 +1,6 @@
 project('Concurrency',
   'cpp',
   version : '1.0.0',
-  license : 'MIT',
   meson_version : '>= 1.3.0',
   default_options : [
     'cpp_std=c++23',
