@@ -9,6 +9,58 @@ Both are cheap because the build is **data-driven**. The shell is already wired
 (`meson.build` → `topics/meson.build` → each topic's `meson.build`), so you only
 ever add data — directories and dictionary entries — never build plumbing.
 
+## Branching and pull requests
+
+`main` is the integration branch: it always builds, always passes its tests, and
+matches `origin/main`. Nothing is committed to it directly — every change arrives
+through a pull request.
+
+A **topic is one unit of review**, so each topic gets its own branch, cut from the
+current `main` and named after its directory (`topic/NNN_snake_case_topic`):
+
+```sh
+git switch main
+git pull --ff-only
+git switch -c topic/002_thread_management
+git push -u origin topic/002_thread_management
+```
+
+Keep the branch focused on that topic: its examples and READMEs, its
+`meson.build`, and the index updates they require. Unrelated fixes belong on
+their own branch.
+
+### Finishing a topic
+
+1. Rebase onto the latest `main` and confirm the topic still builds clean:
+
+   ```sh
+   git fetch origin
+   git rebase origin/main
+   meson compile -C builddir
+   meson test -C builddir --print-errorlogs
+   ```
+
+2. Push the branch and open a pull request into `main`:
+
+   ```sh
+   git push
+   ```
+
+   Use the GitHub CLI (`gh pr create --base main --fill`) or follow the link
+   GitHub prints when a branch is first pushed:
+
+   ```text
+   https://github.com/ShubhamKumar1996/Concurrency/compare/main...topic/002_thread_management
+   ```
+
+3. Merge once the CI workflow (build + tests + ThreadSanitizer) is green, then
+   delete the branch — `git branch -d <branch>` locally and
+   `git push origin --delete <branch>` on the remote.
+
+Non-topic changes (docs, tooling, typo fixes) take the same branch-and-PR route,
+with a prefix such as `docs/` or `chore/` instead of `topic/`. `main` is the only
+long-lived branch.
+
 ## Layout recap
 
 ```
